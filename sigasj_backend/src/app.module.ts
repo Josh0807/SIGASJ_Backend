@@ -1,11 +1,10 @@
 import { join } from 'path';
 import { Module } from '@nestjs/common';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { ConfigModule } from '@nestjs/config';
 import { ServeStaticModule } from '@nestjs/serve-static';
-import { TypeOrmModule, TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import databaseConfig from './database/database.config';
+import { DatabaseModule } from './config/database.module';
 import { ComunicadosModule } from './LandingPage/comunicados/comunicados.module';
 import { GaleriaModule } from './LandingPage/galeria/galeria.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
@@ -14,17 +13,13 @@ import { UsuariosModule } from './usuarios/usuarios.module';
   imports: [
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [databaseConfig],
+      envFilePath: ['.env'],
     }),
     ServeStaticModule.forRoot({
       rootPath: join(process.cwd(), 'uploads'),
       serveRoot: '/uploads',
     }),
-    TypeOrmModule.forRootAsync({
-      inject: [ConfigService],
-      useFactory: (configService: ConfigService) =>
-        configService.get<TypeOrmModuleOptions>('database')!,
-    }),
+    DatabaseModule.register(),
     ComunicadosModule,
     GaleriaModule,
     UsuariosModule,

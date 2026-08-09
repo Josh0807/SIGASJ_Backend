@@ -1,0 +1,14 @@
+{
+  "profiles": {
+    "sigasj_backend": {
+      "commandName": "Project",
+      "workingDirectory": "."
+    },
+    "Swagger (Nest start:dev)": {
+      "commandName": "Executable",
+      "executablePath": "cmd.exe",
+      "commandLineArgs": "/c start-vs.cmd",
+      "workingDirectory": "."
+    }
+  }
+}
