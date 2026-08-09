@@ -10,8 +10,8 @@ import type { MigrationInterface, QueryRunner } from 'typeorm';
  * - Sin patrón @Check previo → no se inventa CHECK de fechas aquí
  * - Enums TypeScript → columnas nvarchar (valores del enum)
  *
- * Usuario: si no existe, se crea tabla mínima solo con idUsuario para poder
- * declarar las FKs. El down NO elimina Usuario (pudo preexistir).
+ * Usuario: si no existe, se crea con columnas base para FKs de Comunicado/Galería.
+ * El down NO elimina Usuario (pudo preexistir).
  */
 export class CreateComunicadoTable1754662800000 implements MigrationInterface {
   name = 'CreateComunicadoTable1754662800000';
@@ -22,7 +22,15 @@ export class CreateComunicadoTable1754662800000 implements MigrationInterface {
       BEGIN
         CREATE TABLE [dbo].[Usuario] (
           [idUsuario] int IDENTITY(1,1) NOT NULL,
-          CONSTRAINT [PK_Usuario] PRIMARY KEY CLUSTERED ([idUsuario])
+          [nombreCompleto] nvarchar(150) NOT NULL CONSTRAINT [DF_Usuario_nombreCompleto] DEFAULT (N''),
+          [correoElectronico] nvarchar(150) NOT NULL,
+          [passwordHash] nvarchar(255) NOT NULL CONSTRAINT [DF_Usuario_passwordHash] DEFAULT (N''),
+          [isActive] bit NOT NULL CONSTRAINT [DF_Usuario_isActive] DEFAULT (1),
+          [tokenVersion] int NOT NULL CONSTRAINT [DF_Usuario_tokenVersion] DEFAULT (0),
+          [fechaCreacion] datetime2 NOT NULL CONSTRAINT [DF_Usuario_fechaCreacion] DEFAULT (getdate()),
+          [fechaActualizacion] datetime2 NOT NULL CONSTRAINT [DF_Usuario_fechaActualizacion] DEFAULT (getdate()),
+          CONSTRAINT [PK_Usuario] PRIMARY KEY CLUSTERED ([idUsuario]),
+          CONSTRAINT [UQ_Usuario_correoElectronico] UNIQUE ([correoElectronico])
         );
       END
     `);
