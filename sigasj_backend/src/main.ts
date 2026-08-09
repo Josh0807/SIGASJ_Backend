@@ -21,12 +21,23 @@ function openBrowser(url: string): void {
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
+  app.enableCors({
+    origin: [
+      'http://localhost:5173',
+      'http://127.0.0.1:5173',
+      'http://localhost:4173',
+      'http://127.0.0.1:4173',
+    ],
+    credentials: true,
+  });
 
   const swaggerConfig = new DocumentBuilder()
     .setTitle('SIGASJ API')
     .setDescription('Documentación de la API del backend SIGASJ')
     .setVersion('0.1.0')
+    .addBearerAuth()
     .addTag('Comunicados públicos')
+    .addTag('Comunicados administrativos')
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
