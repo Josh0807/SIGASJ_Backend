@@ -33,7 +33,7 @@ export class FotografiaGaleria {
   @Column({ name: 'ordenVisualizacion', type: 'int', default: 0 })
   ordenVisualizacion: number;
 
-  @Column({ name: 'activo', type: 'boolean', default: true })
+  @Column({ name: 'activo', type: 'bit', default: true })
   activo: boolean;
 
   @ManyToOne(() => Usuario, { nullable: false, onDelete: 'RESTRICT' })

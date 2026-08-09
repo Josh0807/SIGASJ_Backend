@@ -7,8 +7,8 @@ import { PublicComunicadosResponse } from '../interfaces/public-comunicados-resp
  * Endpoint público de comunicados.
  * Ruta final (con prefijo global `api`): GET /api/public/comunicados
  *
- * Sin autenticación: el proyecto aún no tiene AuthGuard global.
- * Errores inesperados: los gestiona el servicio (500) + capa HTTP de Nest.
+ * Intencionalmente sin JwtAuthGuard / RolesGuard (ni APP_GUARD en el módulo).
+ * Los guards administrativos viven solo en AdminComunicadosController.
  */
 @ApiTags('Comunicados públicos')
 @Controller('public/comunicados')
