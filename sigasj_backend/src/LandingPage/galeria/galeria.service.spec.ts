@@ -193,6 +193,62 @@ describe('GaleriaService', () => {
     ).rejects.toBeInstanceOf(BadRequestException);
   });
 
+  it('rechaza reorganizar con identificadores repetidos', async () => {
+    await expect(
+      service.reorderAdmin({
+        fotografias: [
+          { idFotografiaGaleria: 1, ordenVisualizacion: 0 },
+          { idFotografiaGaleria: 1, ordenVisualizacion: 1 },
+        ],
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('actualiza metadatos administrativos sin cambiar la imagen', async () => {
+    const fotografia = {
+      idFotografiaGaleria: 4,
+      titulo: 'Antes',
+      descripcion: 'Desc',
+      textoAlternativo: 'Alt',
+      ordenVisualizacion: 0,
+      activo: true,
+      imagenUrl: '/uploads/galeria/4.png',
+    } as FotografiaGaleria;
+
+    repository.findOne.mockResolvedValue(fotografia);
+
+    const result = await service.updateAdmin(4, {
+      titulo: 'Después',
+      activo: false,
+    });
+
+    expect(result.titulo).toBe('Después');
+    expect(result.activo).toBe(false);
+    expect(repository.save).toHaveBeenCalled();
+  });
+
+  it('reemplaza imagen y elimina la anterior al guardar', async () => {
+    const fotografia = {
+      idFotografiaGaleria: 5,
+      imagenUrl: '/uploads/galeria/old.png',
+    } as FotografiaGaleria;
+
+    repository.findOne.mockResolvedValue(fotografia);
+    uploadService.saveImage.mockResolvedValue({
+      fileName: 'new.png',
+      imagenUrl: '/uploads/galeria/new.png',
+    });
+
+    const result = await service.replaceImageAdmin(5, {
+      buffer: Buffer.from('x'),
+    } as Express.Multer.File);
+
+    expect(result.imagenUrl).toBe('/uploads/galeria/new.png');
+    expect(uploadService.deleteImage).toHaveBeenCalledWith(
+      '/uploads/galeria/old.png',
+    );
+  });
+
   it('rechaza reorganizar si falta alguna fotografía', async () => {
     const txRepository = {
       findBy: jest.fn().mockResolvedValue([
