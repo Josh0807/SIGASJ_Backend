@@ -46,6 +46,10 @@ lerna-debug.log*
 .temp
 .tmp
 
+# Uploaded gallery images (generated at runtime)
+/uploads/galeria/*
+!/uploads/galeria/.gitkeep
+
 # Local backup of accidentally nested Git metadata
 .git-backup/
 

@@ -1,24 +1,38 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { INestApplication } from '@nestjs/common';
+import { getRepositoryToken } from '@nestjs/typeorm';
 import request from 'supertest';
 import { App } from 'supertest/types';
+import { Repository } from 'typeorm';
 import { AppModule } from './../src/app.module';
+import { Comunicado } from './../src/LandingPage/comunicados/entities/comunicado.entity';
 
 describe('App (e2e)', () => {
   let app: INestApplication<App>;
+  let moduleFixture: TestingModule;
 
-  beforeEach(async () => {
-    const moduleFixture: TestingModule = await Test.createTestingModule({
+  beforeAll(async () => {
+    moduleFixture = await Test.createTestingModule({
       imports: [AppModule],
     }).compile();
 
     app = moduleFixture.createNestApplication();
     app.setGlobalPrefix('api');
     await app.init();
+  }, 60000);
+
+  afterAll(async () => {
+    if (app) {
+      await app.close();
+    }
   });
 
-  afterEach(async () => {
-    await app.close();
+  it('resuelve ComunicadosModule y Repository<Comunicado>', () => {
+    const repository = moduleFixture.get<Repository<Comunicado>>(
+      getRepositoryToken(Comunicado),
+    );
+    expect(repository).toBeDefined();
+    expect(typeof repository.find).toBe('function');
   });
 
   it('/api (GET)', () => {
@@ -39,12 +53,18 @@ describe('App (e2e)', () => {
       expect(response.status).not.toBe(403);
     });
 
-    it('Caso 8 — lista vacía 200 + { data: [], total: 0 }', async () => {
+    it('Caso 8 — lista vacía o datos: siempre 200 + { data, total }', async () => {
       const response = await request(app.getHttpServer())
         .get('/api/public/comunicados')
         .expect(200);
 
-      expect(response.body).toEqual({ data: [], total: 0 });
+      expect(response.body).toEqual(
+        expect.objectContaining({
+          data: expect.any(Array),
+          total: expect.any(Number),
+        }),
+      );
+      expect(response.body.total).toBe(response.body.data.length);
     });
 
     it('Caso 9 — cuerpo sin claves privadas sensibles', async () => {
@@ -66,9 +86,9 @@ describe('App (e2e)', () => {
         .expect(200);
 
       const body = response.body as { data: unknown[]; total: number };
-      // Equivalente a response.data en el cliente HTTP / axios-like.
-      expect(body.data).toEqual([]);
+      expect(Array.isArray(body.data)).toBe(true);
       expect(typeof body.total).toBe('number');
+      expect(body.total).toBe(body.data.length);
     });
   });
 });

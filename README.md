@@ -1,2 +1,44 @@
-# SIGASJ_Backend
-Backend del proyecto de ingeniería SIGASJ
+# SIGASJ Backend
+
+## Base de datos (LocalDB)
+
+- Servidor: `(localdb)\MSSQLLocalDB`
+- Base: **`SIGASJ`** (no usar `master`)
+- Auth: Windows
+
+En Azure Data Studio: conecta a ese servidor y selecciona la base **SIGASJ**.
+
+Migraciones:
+```powershell
+cd sigasj_backend
+npm.cmd run migration:run
+```
+
+## Visual Studio (botón verde)
+
+1. Abre **`SIGASJ_Backend.sln`**.
+2. Clic derecho en **sigasj_backend** → **Set as Startup Project**.
+3. En el desplegable del botón verde elige **`Swagger (Nest start:dev)`** (o `sigasj_backend`).
+4. Pulsa Start / F5.
+
+Swagger: http://localhost:3000/docs/
+
+### Si sigue fallando
+- Instala la workload **Node.js development** en Visual Studio Installer.
+- Confirma Node: `C:\Program Files\nodejs\npm.cmd`
+- Como alternativa segura, usa la terminal:
+
+```powershell
+cd sigasj_backend
+.\start-vs.cmd
+```
+
+## Terminal
+```powershell
+$env:Path = "C:\Program Files\nodejs;" + $env:Path
+cd sigasj_backend
+npm.cmd run start:dev
+```
+
+## Cursor / VS Code
+Run and Debug → **SIGASJ Backend (Swagger)**
