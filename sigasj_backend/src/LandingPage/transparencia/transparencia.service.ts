@@ -8,11 +8,13 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Like, Repository } from 'typeorm';
+import { FindOptionsWhere, In, Like, Repository } from 'typeorm';
 import type { CreatePublicacionTransparenciaDto } from './dto/create-publicacion-transparencia.dto';
 import type { PublicPublicacionTransparenciaDto } from './dto/public-publicacion-transparencia.dto';
 import type { QueryAdminTransparenciaDto } from './dto/query-admin-transparencia.dto';
+import type { ReorderTransparenciaDto } from './dto/reorder-transparencia.dto';
 import type { UpdatePublicacionTransparenciaDto } from './dto/update-publicacion-transparencia.dto';
+import type { UpdateTransparenciaEstadoDto } from './dto/update-transparencia-estado.dto';
 import { PublicacionTransparencia } from './entities/publicacion-transparencia.entity';
 import type { PublicTransparenciaResponse } from './interfaces/public-transparencia-response.interface';
 import { toPublicPublicacionTransparenciaDto } from './mappers/public-publicacion-transparencia.mapper';
@@ -211,6 +213,90 @@ export class TransparenciaService {
       this.rethrowAdminError(
         error,
         'Error inesperado al eliminar una publicación',
+      );
+    }
+  }
+
+  async updateEstadoAdmin(
+    idPublicacionTransparencia: number,
+    dto: UpdateTransparenciaEstadoDto,
+  ): Promise<PublicacionTransparencia> {
+    try {
+      const publicacion = await this.findOneAdmin(idPublicacionTransparencia);
+      publicacion.activo = dto.activo;
+      return await this.publicacionRepository.save(publicacion);
+    } catch (error) {
+      this.rethrowAdminError(
+        error,
+        'Error inesperado al actualizar el estado de una publicación',
+      );
+    }
+  }
+
+  async reorderAdmin(
+    dto: ReorderTransparenciaDto,
+  ): Promise<PublicacionTransparencia[]> {
+    this.assertReorderPayloadIsValid(dto);
+
+    try {
+      return await this.publicacionRepository.manager.transaction(
+        async (manager) => {
+          const repository = manager.getRepository(PublicacionTransparencia);
+          const ids = dto.publicaciones.map(
+            (item) => item.idPublicacionTransparencia,
+          );
+          const rows = await repository.findBy({
+            idPublicacionTransparencia: In(ids),
+          });
+
+          if (rows.length !== ids.length) {
+            throw new NotFoundException(
+              'Una o más publicaciones indicadas no existen.',
+            );
+          }
+
+          const rowsById = new Map(
+            rows.map((row) => [row.idPublicacionTransparencia, row]),
+          );
+          const updatedRows = dto.publicaciones.map((item) => {
+            const row = rowsById.get(item.idPublicacionTransparencia)!;
+            row.ordenVisualizacion = item.ordenVisualizacion;
+            return row;
+          });
+
+          const saved = await repository.save(updatedRows);
+
+          return saved.sort((a, b) => {
+            if (a.ordenVisualizacion !== b.ordenVisualizacion) {
+              return a.ordenVisualizacion - b.ordenVisualizacion;
+            }
+            return a.idPublicacionTransparencia - b.idPublicacionTransparencia;
+          });
+        },
+      );
+    } catch (error) {
+      this.rethrowAdminError(
+        error,
+        'Error inesperado al reorganizar las publicaciones',
+      );
+    }
+  }
+
+  private assertReorderPayloadIsValid(dto: ReorderTransparenciaDto): void {
+    const ids = dto.publicaciones.map(
+      (item) => item.idPublicacionTransparencia,
+    );
+    const positions = dto.publicaciones.map((item) => item.ordenVisualizacion);
+
+    if (new Set(ids).size !== ids.length) {
+      throw new BadRequestException(
+        'No se permiten identificadores repetidos en la reorganización.',
+      );
+    }
+
+    if (new Set(positions).size !== positions.length) {
+      throw new BadRequestException(
+        'No se permiten posiciones repetidas en la reorganización.',
       );
     }
   }

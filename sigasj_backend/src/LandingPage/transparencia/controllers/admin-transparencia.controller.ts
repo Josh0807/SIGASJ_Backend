@@ -37,7 +37,9 @@ import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
 import { RolesGuard } from '../../../auth/guards/roles.guard';
 import { CreatePublicacionTransparenciaDto } from '../dto/create-publicacion-transparencia.dto';
 import { QueryAdminTransparenciaDto } from '../dto/query-admin-transparencia.dto';
+import { ReorderTransparenciaDto } from '../dto/reorder-transparencia.dto';
 import { UpdatePublicacionTransparenciaDto } from '../dto/update-publicacion-transparencia.dto';
+import { UpdateTransparenciaEstadoDto } from '../dto/update-transparencia-estado.dto';
 import { PublicacionTransparencia } from '../entities/publicacion-transparencia.entity';
 import { TransparenciaService } from '../transparencia.service';
 
@@ -79,6 +81,20 @@ export class AdminTransparenciaController {
     @Query() query: QueryAdminTransparenciaDto,
   ): Promise<PublicacionTransparencia[]> {
     return this.transparenciaService.findAllAdmin(query);
+  }
+
+  @Patch('orden')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Reorganizar el orden de las publicaciones',
+    description:
+      'Recibe identificadores y posiciones. Valida duplicados y aplica el cambio en una transacción.',
+  })
+  @ApiOkResponse({ type: PublicacionTransparencia, isArray: true })
+  async reorder(
+    @Body() dto: ReorderTransparenciaDto,
+  ): Promise<PublicacionTransparencia[]> {
+    return this.transparenciaService.reorderAdmin(dto);
   }
 
   @Get(':id')
@@ -138,6 +154,21 @@ export class AdminTransparenciaController {
     @Body() dto: UpdatePublicacionTransparenciaDto,
   ): Promise<PublicacionTransparencia> {
     return this.transparenciaService.updateAdmin(id, dto);
+  }
+
+  @Patch(':id/estado')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Activar o desactivar una publicación',
+    description:
+      'Las publicaciones inactivas no aparecen en la sección pública.',
+  })
+  @ApiOkResponse({ type: PublicacionTransparencia })
+  async updateEstado(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateTransparenciaEstadoDto,
+  ): Promise<PublicacionTransparencia> {
+    return this.transparenciaService.updateEstadoAdmin(id, dto);
   }
 
   @Patch(':id/archivo')

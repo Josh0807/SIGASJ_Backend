@@ -15,7 +15,7 @@ describe('TransparenciaService', () => {
   let repository: jest.Mocked<
     Pick<
       Repository<PublicacionTransparencia>,
-      'find' | 'findOne' | 'create' | 'save' | 'remove'
+      'find' | 'findOne' | 'create' | 'save' | 'remove' | 'findBy' | 'manager'
     >
   >;
   let uploadService: jest.Mocked<
@@ -26,9 +26,14 @@ describe('TransparenciaService', () => {
     repository = {
       find: jest.fn().mockResolvedValue([]),
       findOne: jest.fn(),
+      findBy: jest.fn(),
       create: jest.fn((value) => value as PublicacionTransparencia),
       save: jest.fn(async (value) => value as PublicacionTransparencia),
       remove: jest.fn(async (value) => value as PublicacionTransparencia),
+      manager: {
+        transaction: jest.fn(),
+        getRepository: jest.fn(),
+      },
     };
     uploadService = {
       saveFile: jest.fn(),
@@ -196,6 +201,102 @@ describe('TransparenciaService', () => {
 
     await expect(service.findOneAdmin(99)).rejects.toBeInstanceOf(
       NotFoundException,
+    );
+  });
+
+  it('activa o desactiva una publicación por id', async () => {
+    const publicacion = {
+      idPublicacionTransparencia: 2,
+      activo: true,
+    } as PublicacionTransparencia;
+
+    repository.findOne.mockResolvedValue(publicacion);
+
+    const result = await service.updateEstadoAdmin(2, { activo: false });
+
+    expect(result.activo).toBe(false);
+    expect(repository.save).toHaveBeenCalledWith(
+      expect.objectContaining({ activo: false }),
+    );
+  });
+
+  it('reorganiza posiciones en transacción', async () => {
+    const row1 = {
+      idPublicacionTransparencia: 1,
+      ordenVisualizacion: 0,
+    } as PublicacionTransparencia;
+    const row2 = {
+      idPublicacionTransparencia: 2,
+      ordenVisualizacion: 1,
+    } as PublicacionTransparencia;
+
+    const txRepository = {
+      findBy: jest.fn().mockResolvedValue([row1, row2]),
+      save: jest.fn(async (rows: PublicacionTransparencia[]) => rows),
+    };
+
+    repository.manager.transaction.mockImplementation(async (callback) =>
+      callback({
+        getRepository: () => txRepository,
+      } as never),
+    );
+
+    const result = await service.reorderAdmin({
+      publicaciones: [
+        { idPublicacionTransparencia: 1, ordenVisualizacion: 2 },
+        { idPublicacionTransparencia: 2, ordenVisualizacion: 1 },
+      ],
+    });
+
+    expect(result).toEqual([
+      expect.objectContaining({
+        idPublicacionTransparencia: 2,
+        ordenVisualizacion: 1,
+      }),
+      expect.objectContaining({
+        idPublicacionTransparencia: 1,
+        ordenVisualizacion: 2,
+      }),
+    ]);
+  });
+
+  it('rechaza reorganizar con posiciones repetidas', async () => {
+    await expect(
+      service.reorderAdmin({
+        publicaciones: [
+          { idPublicacionTransparencia: 1, ordenVisualizacion: 0 },
+          { idPublicacionTransparencia: 2, ordenVisualizacion: 0 },
+        ],
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('rechaza reorganizar con identificadores repetidos', async () => {
+    await expect(
+      service.reorderAdmin({
+        publicaciones: [
+          { idPublicacionTransparencia: 1, ordenVisualizacion: 0 },
+          { idPublicacionTransparencia: 1, ordenVisualizacion: 1 },
+        ],
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('excluye publicaciones inactivas del listado público', async () => {
+    repository.find.mockResolvedValue([
+      {
+        idPublicacionTransparencia: 1,
+        nombre: 'Activa',
+        descripcionBreve: 'Ok',
+        archivoUrl: '/uploads/transparencia/a.pdf',
+        tipoArchivo: TipoArchivoTransparencia.PDF,
+      } as PublicacionTransparencia,
+    ]);
+
+    await service.findPublicPublicaciones();
+
+    expect(repository.find).toHaveBeenCalledWith(
+      expect.objectContaining({ where: { activo: true } }),
     );
   });
 
