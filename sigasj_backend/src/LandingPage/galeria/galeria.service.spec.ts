@@ -14,7 +14,7 @@ describe('GaleriaService', () => {
   let repository: jest.Mocked<
     Pick<
       Repository<FotografiaGaleria>,
-      'find' | 'findOne' | 'create' | 'save' | 'remove'
+      'find' | 'findOne' | 'create' | 'save' | 'remove' | 'findBy' | 'manager'
     >
   >;
   let uploadService: jest.Mocked<
@@ -25,9 +25,14 @@ describe('GaleriaService', () => {
     repository = {
       find: jest.fn(),
       findOne: jest.fn(),
+      findBy: jest.fn(),
       create: jest.fn((value) => value as FotografiaGaleria),
       save: jest.fn(async (value) => value as FotografiaGaleria),
       remove: jest.fn(async (value) => value as FotografiaGaleria),
+      manager: {
+        transaction: jest.fn(),
+        getRepository: jest.fn(),
+      },
     };
     uploadService = {
       saveImage: jest.fn(),
@@ -119,6 +124,97 @@ describe('GaleriaService', () => {
     await expect(
       service.createAdmin({ textoAlternativo: 'Foto' }, undefined, 1),
     ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('activa o desactiva una fotografía por id', async () => {
+    const fotografia = {
+      idFotografiaGaleria: 2,
+      activo: true,
+    } as FotografiaGaleria;
+
+    repository.findOne.mockResolvedValue(fotografia);
+
+    const result = await service.updateEstadoAdmin(2, { activo: false });
+
+    expect(result.activo).toBe(false);
+    expect(repository.save).toHaveBeenCalledWith(
+      expect.objectContaining({ activo: false }),
+    );
+  });
+
+  it('reorganiza posiciones en transacción', async () => {
+    const row1 = {
+      idFotografiaGaleria: 1,
+      ordenVisualizacion: 0,
+    } as FotografiaGaleria;
+    const row2 = {
+      idFotografiaGaleria: 2,
+      ordenVisualizacion: 1,
+    } as FotografiaGaleria;
+
+    const txRepository = {
+      findBy: jest.fn().mockResolvedValue([row1, row2]),
+      save: jest.fn(async (rows: FotografiaGaleria[]) => rows),
+    };
+
+    repository.manager.transaction.mockImplementation(async (callback) =>
+      callback({
+        getRepository: () => txRepository,
+      } as never),
+    );
+
+    const result = await service.reorderAdmin({
+      fotografias: [
+        { idFotografiaGaleria: 1, ordenVisualizacion: 2 },
+        { idFotografiaGaleria: 2, ordenVisualizacion: 1 },
+      ],
+    });
+
+    expect(result).toEqual([
+      expect.objectContaining({
+        idFotografiaGaleria: 2,
+        ordenVisualizacion: 1,
+      }),
+      expect.objectContaining({
+        idFotografiaGaleria: 1,
+        ordenVisualizacion: 2,
+      }),
+    ]);
+  });
+
+  it('rechaza reorganizar con posiciones repetidas', async () => {
+    await expect(
+      service.reorderAdmin({
+        fotografias: [
+          { idFotografiaGaleria: 1, ordenVisualizacion: 0 },
+          { idFotografiaGaleria: 2, ordenVisualizacion: 0 },
+        ],
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
+  });
+
+  it('rechaza reorganizar si falta alguna fotografía', async () => {
+    const txRepository = {
+      findBy: jest.fn().mockResolvedValue([
+        { idFotografiaGaleria: 1, ordenVisualizacion: 0 } as FotografiaGaleria,
+      ]),
+      save: jest.fn(),
+    };
+
+    repository.manager.transaction.mockImplementation(async (callback) =>
+      callback({
+        getRepository: () => txRepository,
+      } as never),
+    );
+
+    await expect(
+      service.reorderAdmin({
+        fotografias: [
+          { idFotografiaGaleria: 1, ordenVisualizacion: 0 },
+          { idFotografiaGaleria: 99, ordenVisualizacion: 1 },
+        ],
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
   });
 
   it('elimina registro e imagen asociada', async () => {

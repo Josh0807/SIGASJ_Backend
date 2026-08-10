@@ -8,10 +8,12 @@ import {
   UnauthorizedException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { FindOptionsWhere, Like, Repository } from 'typeorm';
+import { FindOptionsWhere, In, Like, Repository } from 'typeorm';
 import type { CreateGaleriaFotoDto } from './dto/create-galeria-foto.dto';
 import type { PublicGaleriaFotoDto } from './dto/public-galeria-foto.dto';
 import type { QueryAdminGaleriaDto } from './dto/query-admin-galeria.dto';
+import type { ReorderGaleriaDto } from './dto/reorder-galeria.dto';
+import type { UpdateGaleriaEstadoDto } from './dto/update-galeria-estado.dto';
 import type { UpdateGaleriaFotoDto } from './dto/update-galeria-foto.dto';
 import { FotografiaGaleria } from './entities/fotografia-galeria.entity';
 import type { PublicGaleriaResponse } from './interfaces/public-galeria-response.interface';
@@ -210,6 +212,86 @@ export class GaleriaService {
       this.rethrowAdminError(
         error,
         'Error inesperado al eliminar una fotografía',
+      );
+    }
+  }
+
+  async updateEstadoAdmin(
+    idFotografiaGaleria: number,
+    dto: UpdateGaleriaEstadoDto,
+  ): Promise<FotografiaGaleria> {
+    try {
+      const fotografia = await this.findOneAdmin(idFotografiaGaleria);
+      fotografia.activo = dto.activo;
+      return await this.fotografiaRepository.save(fotografia);
+    } catch (error) {
+      this.rethrowAdminError(
+        error,
+        'Error inesperado al actualizar el estado de una fotografía',
+      );
+    }
+  }
+
+  async reorderAdmin(dto: ReorderGaleriaDto): Promise<FotografiaGaleria[]> {
+    this.assertReorderPayloadIsValid(dto);
+
+    try {
+      return await this.fotografiaRepository.manager.transaction(
+        async (manager) => {
+          const repository = manager.getRepository(FotografiaGaleria);
+          const ids = dto.fotografias.map(
+            (item) => item.idFotografiaGaleria,
+          );
+          const rows = await repository.findBy({
+            idFotografiaGaleria: In(ids),
+          });
+
+          if (rows.length !== ids.length) {
+            throw new NotFoundException(
+              'Una o más fotografías indicadas no existen.',
+            );
+          }
+
+          const rowsById = new Map(
+            rows.map((row) => [row.idFotografiaGaleria, row]),
+          );
+          const updatedRows = dto.fotografias.map((item) => {
+            const row = rowsById.get(item.idFotografiaGaleria)!;
+            row.ordenVisualizacion = item.ordenVisualizacion;
+            return row;
+          });
+
+          const saved = await repository.save(updatedRows);
+
+          return saved.sort((a, b) => {
+            if (a.ordenVisualizacion !== b.ordenVisualizacion) {
+              return a.ordenVisualizacion - b.ordenVisualizacion;
+            }
+            return a.idFotografiaGaleria - b.idFotografiaGaleria;
+          });
+        },
+      );
+    } catch (error) {
+      this.rethrowAdminError(
+        error,
+        'Error inesperado al reorganizar la galería',
+      );
+    }
+  }
+
+  private assertReorderPayloadIsValid(dto: ReorderGaleriaDto): void {
+    const ids = dto.fotografias.map((item) => item.idFotografiaGaleria);
+    const positions = dto.fotografias.map((item) => item.ordenVisualizacion);
+
+    if (new Set(ids).size !== ids.length) {
+      throw new BadRequestException(
+        'No se permiten identificadores repetidos en la reorganización.',
+      );
+    }
+
+    if (new Set(positions).size !== positions.length) {
+      throw new BadRequestException(
+        'No se permiten posiciones repetidas en la reorganización.',
       );
     }
   }

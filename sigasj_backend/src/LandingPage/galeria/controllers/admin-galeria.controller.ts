@@ -38,6 +38,8 @@ import { RolesGuard } from '../../../auth/guards/roles.guard';
 import { GaleriaService } from '../galeria.service';
 import { CreateGaleriaFotoDto } from '../dto/create-galeria-foto.dto';
 import { QueryAdminGaleriaDto } from '../dto/query-admin-galeria.dto';
+import { ReorderGaleriaDto } from '../dto/reorder-galeria.dto';
+import { UpdateGaleriaEstadoDto } from '../dto/update-galeria-estado.dto';
 import { UpdateGaleriaFotoDto } from '../dto/update-galeria-foto.dto';
 import { FotografiaGaleria } from '../entities/fotografia-galeria.entity';
 
@@ -79,6 +81,18 @@ export class AdminGaleriaController {
     @Query() query: QueryAdminGaleriaDto,
   ): Promise<FotografiaGaleria[]> {
     return this.galeriaService.findAllAdmin(query);
+  }
+
+  @Patch('orden')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Reorganizar el orden de las fotografías',
+    description:
+      'Recibe identificadores y posiciones. Valida duplicados y aplica el cambio en una transacción.',
+  })
+  @ApiOkResponse({ type: FotografiaGaleria, isArray: true })
+  async reorder(@Body() dto: ReorderGaleriaDto): Promise<FotografiaGaleria[]> {
+    return this.galeriaService.reorderAdmin(dto);
   }
 
   @Get(':id')
@@ -139,6 +153,21 @@ export class AdminGaleriaController {
     @Body() dto: UpdateGaleriaFotoDto,
   ): Promise<FotografiaGaleria> {
     return this.galeriaService.updateAdmin(id, dto);
+  }
+
+  @Patch(':id/estado')
+  @HttpCode(HttpStatus.OK)
+  @ApiOperation({
+    summary: 'Activar o desactivar una fotografía',
+    description:
+      'Las fotografías inactivas no aparecen en la galería pública.',
+  })
+  @ApiOkResponse({ type: FotografiaGaleria })
+  async updateEstado(
+    @Param('id', ParseIntPipe) id: number,
+    @Body() dto: UpdateGaleriaEstadoDto,
+  ): Promise<FotografiaGaleria> {
+    return this.galeriaService.updateEstadoAdmin(id, dto);
   }
 
   @Patch(':id/imagen')
