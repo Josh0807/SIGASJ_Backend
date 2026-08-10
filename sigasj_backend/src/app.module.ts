@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './config/database.module';
 import { ComunicadosModule } from './LandingPage/comunicados/comunicados.module';
 import { GaleriaModule } from './LandingPage/galeria/galeria.module';
+import { TransparenciaModule } from './LandingPage/transparencia/transparencia.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 
 @Module({
@@ -24,6 +25,7 @@ import { UsuariosModule } from './usuarios/usuarios.module';
     AuthModule,
     ComunicadosModule,
     GaleriaModule,
+    TransparenciaModule,
     UsuariosModule,
   ],
   controllers: [AppController],

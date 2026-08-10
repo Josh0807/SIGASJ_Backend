@@ -3,6 +3,7 @@ import { config as loadEnv } from 'dotenv';
 import { DataSource } from 'typeorm';
 import { Comunicado } from '../LandingPage/comunicados/entities/comunicado.entity';
 import { FotografiaGaleria } from '../LandingPage/galeria/entities/fotografia-galeria.entity';
+import { PublicacionTransparencia } from '../LandingPage/transparencia/entities/publicacion-transparencia.entity';
 import { Usuario } from '../usuarios/entities/usuario.entity';
 
 loadEnv();
@@ -53,7 +54,7 @@ const AppDataSource = new DataSource(
         type: 'mssql',
         driver: msnodesqlv8Driver,
         database: process.env.DB_DATABASE,
-        entities: [Comunicado, Usuario, FotografiaGaleria],
+        entities: [Comunicado, Usuario, FotografiaGaleria, PublicacionTransparencia],
         migrations: ['src/migrations/*{.ts,.js}'],
         migrationsTableName: 'typeorm_migrations',
         synchronize: false,
@@ -75,7 +76,7 @@ const AppDataSource = new DataSource(
         username: process.env.DB_USERNAME,
         password: process.env.DB_PASSWORD || '',
         database: process.env.DB_DATABASE,
-        entities: [Comunicado, Usuario, FotografiaGaleria],
+        entities: [Comunicado, Usuario, FotografiaGaleria, PublicacionTransparencia],
         migrations: ['src/migrations/*{.ts,.js}'],
         migrationsTableName: 'typeorm_migrations',
         synchronize: false,

@@ -2,6 +2,7 @@ import { ConfigService } from '@nestjs/config';
 import type { TypeOrmModuleOptions } from '@nestjs/typeorm';
 import { Comunicado } from '../LandingPage/comunicados/entities/comunicado.entity';
 import { FotografiaGaleria } from '../LandingPage/galeria/entities/fotografia-galeria.entity';
+import { PublicacionTransparencia } from '../LandingPage/transparencia/entities/publicacion-transparencia.entity';
 import { Usuario } from '../usuarios/entities/usuario.entity';
 
 // Driver ODBC con autenticación de Windows (LocalDB / Azure Data Studio).
@@ -40,7 +41,7 @@ export const buildTypeOrmOptions = (
       type: 'mssql',
       driver: msnodesqlv8Driver,
       database,
-      entities: [Comunicado, Usuario, FotografiaGaleria],
+      entities: [Comunicado, Usuario, FotografiaGaleria, PublicacionTransparencia],
       migrations: ['dist/migrations/*{.js}'],
       migrationsTableName: 'typeorm_migrations',
       autoLoadEntities: true,
@@ -78,7 +79,7 @@ export const buildTypeOrmOptions = (
     username,
     password: password ?? '',
     database,
-    entities: [Comunicado, Usuario, FotografiaGaleria],
+    entities: [Comunicado, Usuario, FotografiaGaleria, PublicacionTransparencia],
     migrations: ['dist/migrations/*{.js}'],
     migrationsTableName: 'typeorm_migrations',
     autoLoadEntities: true,
