@@ -38,6 +38,8 @@ async function bootstrap() {
     .addBearerAuth()
     .addTag('Comunicados públicos')
     .addTag('Comunicados administrativos')
+    .addTag('Galería pública')
+    .addTag('Galería administrativa')
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
