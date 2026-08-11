@@ -3,9 +3,9 @@
  * Run: npx ts-node -r tsconfig-paths/register scripts/verify-comunicado-migration.ts
  */
 import dataSource from '../src/config/typeorm.data-source';
-import { Comunicado } from '../src/LandingPage/comunicados/entities/comunicado.entity';
-import { EstadoComunicado } from '../src/LandingPage/comunicados/enums/estado-comunicado.enum';
-import { TipoComunicado } from '../src/LandingPage/comunicados/enums/tipo-comunicado.enum';
+import { Comunicado } from '../src/comunicados/entities/comunicado.entity';
+import { EstadoComunicado } from '../src/comunicados/enums/estado-comunicado.enum';
+import { TipoComunicado } from '../src/comunicados/enums/tipo-comunicado.enum';
 import { Usuario } from '../src/usuarios/entities/usuario.entity';
 
 type Col = {

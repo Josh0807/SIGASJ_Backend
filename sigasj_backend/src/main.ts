@@ -1,4 +1,5 @@
 import { exec } from 'node:child_process';
+import { ValidationPipe } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 import { AppModule } from './app.module';
@@ -21,6 +22,13 @@ function openBrowser(url: string): void {
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
   app.setGlobalPrefix('api');
+  app.useGlobalPipes(
+    new ValidationPipe({
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
+    }),
+  );
   app.enableCors({
     origin: [
       'http://localhost:5173',
@@ -40,6 +48,8 @@ async function bootstrap() {
     .addTag('Comunicados administrativos')
     .addTag('Galería pública')
     .addTag('Galería administrativa')
+    .addTag('Transparencia pública')
+    .addTag('Transparencia administrativa')
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
