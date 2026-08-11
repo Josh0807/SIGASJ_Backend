@@ -1,6 +1,6 @@
 import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { GaleriaService } from '../galeria.service';
+import { GaleriaService } from '../services/galeria.service';
 import type { PublicGaleriaResponse } from '../interfaces/public-galeria-response.interface';
 
 /**

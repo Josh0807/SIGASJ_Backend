@@ -14,8 +14,6 @@ import {
   UploadedFile,
   UseGuards,
   UseInterceptors,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import {
@@ -30,24 +28,18 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { CurrentUser } from '../../../auth/decorators/current-user.decorator';
-import { Roles } from '../../../auth/decorators/roles.decorator';
-import { RolUsuario } from '../../../auth/enums/rol-usuario.enum';
-import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../../../auth/guards/roles.guard';
-import { GaleriaService } from '../galeria.service';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { RolUsuario } from '../../auth/enums/rol-usuario.enum';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { GaleriaService } from '../services/galeria.service';
 import { CreateGaleriaFotoDto } from '../dto/create-galeria-foto.dto';
 import { QueryAdminGaleriaDto } from '../dto/query-admin-galeria.dto';
 import { ReorderGaleriaDto } from '../dto/reorder-galeria.dto';
 import { UpdateGaleriaEstadoDto } from '../dto/update-galeria-estado.dto';
 import { UpdateGaleriaFotoDto } from '../dto/update-galeria-foto.dto';
 import { FotografiaGaleria } from '../entities/fotografia-galeria.entity';
-
-const adminValidationPipe = new ValidationPipe({
-  whitelist: true,
-  forbidNonWhitelisted: true,
-  transform: true,
-});
 
 /**
  * Administración de la galería pública.
@@ -65,7 +57,6 @@ const adminValidationPipe = new ValidationPipe({
 @Controller('admin/galeria')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(RolUsuario.ADMINISTRADORA, RolUsuario.SECRETARIA_EJECUTIVA)
-@UsePipes(adminValidationPipe)
 export class AdminGaleriaController {
   constructor(private readonly galeriaService: GaleriaService) {}
 

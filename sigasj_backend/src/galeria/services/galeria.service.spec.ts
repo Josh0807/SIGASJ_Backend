@@ -6,8 +6,8 @@ import {
 } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { GaleriaService } from './galeria.service';
-import { FotografiaGaleria } from './entities/fotografia-galeria.entity';
-import { GaleriaImageUploadService } from './services/galeria-image-upload.service';
+import { FotografiaGaleria } from '../entities/fotografia-galeria.entity';
+import { GaleriaImageUploadService } from './galeria-image-upload.service';
 
 describe('GaleriaService', () => {
   let service: GaleriaService;

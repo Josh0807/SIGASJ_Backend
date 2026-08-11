@@ -1,8 +1,8 @@
 import 'reflect-metadata';
 import { config as loadEnv } from 'dotenv';
 import { DataSource } from 'typeorm';
-import { Comunicado } from '../LandingPage/comunicados/entities/comunicado.entity';
-import { FotografiaGaleria } from '../LandingPage/galeria/entities/fotografia-galeria.entity';
+import { Comunicado } from '../comunicados/entities/comunicado.entity';
+import { FotografiaGaleria } from '../galeria/entities/fotografia-galeria.entity';
 import { Usuario } from '../usuarios/entities/usuario.entity';
 
 loadEnv();

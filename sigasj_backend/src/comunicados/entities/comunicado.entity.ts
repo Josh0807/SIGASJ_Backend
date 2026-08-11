@@ -8,7 +8,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm';
-import { Usuario } from '../../../usuarios/entities/usuario.entity';
+import { Usuario } from '../../usuarios/entities/usuario.entity';
 import { EstadoComunicado } from '../enums/estado-comunicado.enum';
 import { TipoComunicado } from '../enums/tipo-comunicado.enum';
 

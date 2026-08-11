@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { AuthModule } from '../../auth/auth.module';
-import { ComunicadosService } from './comunicados.service';
+import { AuthModule } from '../auth/auth.module';
+import { ComunicadosService } from './services/comunicados.service';
 import { AdminComunicadosController } from './controllers/admin-comunicados.controller';
 import { PublicComunicadosController } from './controllers/public-comunicados.controller';
 import { Comunicado } from './entities/comunicado.entity';

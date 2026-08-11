@@ -9,8 +9,6 @@ import {
   Patch,
   Post,
   UseGuards,
-  UsePipes,
-  ValidationPipe,
 } from '@nestjs/common';
 import {
   ApiBearerAuth,
@@ -21,26 +19,16 @@ import {
   ApiTags,
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
-import { CurrentUser } from '../../../auth/decorators/current-user.decorator';
-import { Roles } from '../../../auth/decorators/roles.decorator';
-import { RolUsuario } from '../../../auth/enums/rol-usuario.enum';
-import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../../../auth/guards/roles.guard';
-import { ComunicadosService } from '../comunicados.service';
+import { CurrentUser } from '../../auth/decorators/current-user.decorator';
+import { Roles } from '../../auth/decorators/roles.decorator';
+import { RolUsuario } from '../../auth/enums/rol-usuario.enum';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { ComunicadosService } from '../services/comunicados.service';
 import { CreateComunicadoDto } from '../dto/create-comunicado.dto';
 import { UpdateComunicadoDto } from '../dto/update-comunicado.dto';
 import { UpdateEstadoComunicadoDto } from '../dto/update-estado-comunicado.dto';
 import { Comunicado } from '../entities/comunicado.entity';
-
-/**
- * Rechaza campos no declarados en los DTO (p. ej. idUsuarioCreador,
- * idUsuarioModificador, fechaCreacion, fechaActualizacion).
- */
-const adminValidationPipe = new ValidationPipe({
-  whitelist: true,
-  forbidNonWhitelisted: true,
-  transform: true,
-});
 
 /**
  * Administración de comunicados.
@@ -61,7 +49,6 @@ const adminValidationPipe = new ValidationPipe({
 @Controller('admin/comunicados')
 @UseGuards(JwtAuthGuard, RolesGuard)
 @Roles(RolUsuario.ADMINISTRADORA, RolUsuario.SECRETARIA_EJECUTIVA)
-@UsePipes(adminValidationPipe)
 export class AdminComunicadosController {
   constructor(private readonly comunicadosService: ComunicadosService) {}
 

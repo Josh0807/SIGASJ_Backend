@@ -1,46 +1,48 @@
 import { ForbiddenException } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
 import { GUARDS_METADATA } from '@nestjs/common/constants';
-import { ROLES_KEY } from '../../../auth/decorators/roles.decorator';
-import { RolUsuario } from '../../../auth/enums/rol-usuario.enum';
-import { JwtAuthGuard } from '../../../auth/guards/jwt-auth.guard';
-import { RolesGuard } from '../../../auth/guards/roles.guard';
-import { AdminGaleriaController } from './admin-galeria.controller';
-import { PublicGaleriaController } from './public-galeria.controller';
+import { ROLES_KEY } from '../../auth/decorators/roles.decorator';
+import { RolUsuario } from '../../auth/enums/rol-usuario.enum';
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../../auth/guards/roles.guard';
+import { AdminComunicadosController } from './admin-comunicados.controller';
+import { PublicComunicadosController } from './public-comunicados.controller';
 
-describe('Galería — seguridad administrativa', () => {
-  it('protege AdminGaleriaController con JwtAuthGuard + RolesGuard', () => {
+describe('Comunicados — seguridad administrativa', () => {
+  it('protege AdminComunicadosController con JwtAuthGuard + RolesGuard a nivel de clase', () => {
     const guards = Reflect.getMetadata(
       GUARDS_METADATA,
-      AdminGaleriaController,
+      AdminComunicadosController,
     ) as unknown[];
 
     expect(guards).toEqual(expect.arrayContaining([JwtAuthGuard, RolesGuard]));
     expect(guards).toHaveLength(2);
   });
 
-  it('autoriza solo Administradora y Secretaria Ejecutiva', () => {
+  it('autoriza solo Administradora y Secretaria Ejecutiva en el controlador admin', () => {
     const roles = Reflect.getMetadata(
       ROLES_KEY,
-      AdminGaleriaController,
+      AdminComunicadosController,
     ) as RolUsuario[];
 
     expect(roles).toEqual([
       RolUsuario.ADMINISTRADORA,
       RolUsuario.SECRETARIA_EJECUTIVA,
     ]);
+    expect(roles).not.toContain(RolUsuario.FONTANERO);
+    expect(roles).not.toContain(RolUsuario.ABONADO);
   });
 
-  it('no aplica guards al endpoint público de galería', () => {
+  it('no aplica guards al endpoint público', () => {
     const guards = Reflect.getMetadata(
       GUARDS_METADATA,
-      PublicGaleriaController,
+      PublicComunicadosController,
     );
 
     expect(guards ?? []).toEqual([]);
   });
 
-  describe('RolesGuard (roles admin de galería)', () => {
+  describe('RolesGuard (roles admin de comunicados)', () => {
     const required = [
       RolUsuario.ADMINISTRADORA,
       RolUsuario.SECRETARIA_EJECUTIVA,
@@ -81,5 +83,11 @@ describe('Galería — seguridad administrativa', () => {
         );
       },
     );
+
+    it('deniega usuario autenticado sin rol válido con 403', () => {
+      expect(() => guard.canActivate(contextWithRol(undefined))).toThrow(
+        ForbiddenException,
+      );
+    });
   });
 });

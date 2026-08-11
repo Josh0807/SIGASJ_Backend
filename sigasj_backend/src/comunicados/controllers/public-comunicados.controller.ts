@@ -1,6 +1,6 @@
 import { Controller, Get, HttpCode, HttpStatus } from '@nestjs/common';
 import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
-import { ComunicadosService } from '../comunicados.service';
+import { ComunicadosService } from '../services/comunicados.service';
 import { PublicComunicadosResponse } from '../interfaces/public-comunicados-response.interface';
 
 /**

@@ -9,16 +9,16 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { FindOptionsWhere, In, Like, Repository } from 'typeorm';
-import type { CreateGaleriaFotoDto } from './dto/create-galeria-foto.dto';
-import type { PublicGaleriaFotoDto } from './dto/public-galeria-foto.dto';
-import type { QueryAdminGaleriaDto } from './dto/query-admin-galeria.dto';
-import type { ReorderGaleriaDto } from './dto/reorder-galeria.dto';
-import type { UpdateGaleriaEstadoDto } from './dto/update-galeria-estado.dto';
-import type { UpdateGaleriaFotoDto } from './dto/update-galeria-foto.dto';
-import { FotografiaGaleria } from './entities/fotografia-galeria.entity';
-import type { PublicGaleriaResponse } from './interfaces/public-galeria-response.interface';
-import { toPublicGaleriaFotoDto } from './mappers/public-galeria-foto.mapper';
-import { GaleriaImageUploadService } from './services/galeria-image-upload.service';
+import type { CreateGaleriaFotoDto } from '../dto/create-galeria-foto.dto';
+import type { PublicGaleriaFotoDto } from '../dto/public-galeria-foto.dto';
+import type { QueryAdminGaleriaDto } from '../dto/query-admin-galeria.dto';
+import type { ReorderGaleriaDto } from '../dto/reorder-galeria.dto';
+import type { UpdateGaleriaEstadoDto } from '../dto/update-galeria-estado.dto';
+import type { UpdateGaleriaFotoDto } from '../dto/update-galeria-foto.dto';
+import { FotografiaGaleria } from '../entities/fotografia-galeria.entity';
+import type { PublicGaleriaResponse } from '../interfaces/public-galeria-response.interface';
+import { toPublicGaleriaFotoDto } from '../mappers/public-galeria-foto.mapper';
+import { GaleriaImageUploadService } from './galeria-image-upload.service';
 
 const PUBLIC_QUERY_ERROR_MESSAGE =
   'No fue posible consultar la galería en este momento.';

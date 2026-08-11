@@ -6,12 +6,12 @@ import {
 } from '@nestjs/common';
 import type { Repository } from 'typeorm';
 import { ComunicadosService } from './comunicados.service';
-import { CreateComunicadoDto } from './dto/create-comunicado.dto';
-import { UpdateComunicadoDto } from './dto/update-comunicado.dto';
-import { UpdateEstadoComunicadoDto } from './dto/update-estado-comunicado.dto';
-import type { Comunicado } from './entities/comunicado.entity';
-import { EstadoComunicado } from './enums/estado-comunicado.enum';
-import { TipoComunicado } from './enums/tipo-comunicado.enum';
+import { CreateComunicadoDto } from '../dto/create-comunicado.dto';
+import { UpdateComunicadoDto } from '../dto/update-comunicado.dto';
+import { UpdateEstadoComunicadoDto } from '../dto/update-estado-comunicado.dto';
+import type { Comunicado } from '../entities/comunicado.entity';
+import { EstadoComunicado } from '../enums/estado-comunicado.enum';
+import { TipoComunicado } from '../enums/tipo-comunicado.enum';
 
 describe('ComunicadosService', () => {
   let service: ComunicadosService;

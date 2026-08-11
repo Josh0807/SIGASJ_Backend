@@ -9,22 +9,22 @@ import {
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import type { CreateComunicadoDto } from './dto/create-comunicado.dto';
-import type { PublicComunicadoDto } from './dto/public-comunicado.dto';
-import type { UpdateComunicadoDto } from './dto/update-comunicado.dto';
-import type { UpdateEstadoComunicadoDto } from './dto/update-estado-comunicado.dto';
-import { Comunicado } from './entities/comunicado.entity';
-import { EstadoComunicado } from './enums/estado-comunicado.enum';
-import type { PublicComunicadosResponse } from './interfaces/public-comunicados-response.interface';
-import { toPublicComunicadoDto } from './mappers/public-comunicado.mapper';
+import type { CreateComunicadoDto } from '../dto/create-comunicado.dto';
+import type { PublicComunicadoDto } from '../dto/public-comunicado.dto';
+import type { UpdateComunicadoDto } from '../dto/update-comunicado.dto';
+import type { UpdateEstadoComunicadoDto } from '../dto/update-estado-comunicado.dto';
+import { Comunicado } from '../entities/comunicado.entity';
+import { EstadoComunicado } from '../enums/estado-comunicado.enum';
+import type { PublicComunicadosResponse } from '../interfaces/public-comunicados-response.interface';
+import { toPublicComunicadoDto } from '../mappers/public-comunicado.mapper';
 import {
   comparePublicComunicadoOrder,
   isPubliclyVisible,
-} from './utils/public-comunicados-visibility';
+} from '../utils/public-comunicados-visibility';
 import {
   isFechaVencimientoGteInicio,
   parseDateOnly,
-} from './validators/fecha-vencimiento-gte-inicio.validator';
+} from '../validators/fecha-vencimiento-gte-inicio.validator';
 
 const PUBLIC_QUERY_ERROR_MESSAGE =
   'No fue posible consultar los comunicados en este momento.';
