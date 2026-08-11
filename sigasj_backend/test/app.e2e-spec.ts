@@ -5,7 +5,7 @@ import request from 'supertest';
 import { App } from 'supertest/types';
 import { Repository } from 'typeorm';
 import { AppModule } from './../src/app.module';
-import { Comunicado } from './../src/LandingPage/comunicados/entities/comunicado.entity';
+import { Comunicado } from './../src/comunicados/entities/comunicado.entity';
 
 describe('App (e2e)', () => {
   let app: INestApplication<App>;

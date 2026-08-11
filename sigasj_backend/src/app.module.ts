@@ -6,9 +6,9 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
 import { DatabaseModule } from './config/database.module';
-import { ComunicadosModule } from './LandingPage/comunicados/comunicados.module';
-import { GaleriaModule } from './LandingPage/galeria/galeria.module';
-import { TransparenciaModule } from './LandingPage/transparencia/transparencia.module';
+import { ComunicadosModule } from './comunicados/comunicados.module';
+import { GaleriaModule } from './galeria/galeria.module';
+import { TransparenciaModule } from './transparencia/transparencia.module';
 import { UsuariosModule } from './usuarios/usuarios.module';
 
 @Module({

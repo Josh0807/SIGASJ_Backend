@@ -1,8 +1,8 @@
 import { ConfigService } from '@nestjs/config';
 import type { TypeOrmModuleOptions } from '@nestjs/typeorm';
-import { Comunicado } from '../LandingPage/comunicados/entities/comunicado.entity';
-import { FotografiaGaleria } from '../LandingPage/galeria/entities/fotografia-galeria.entity';
-import { PublicacionTransparencia } from '../LandingPage/transparencia/entities/publicacion-transparencia.entity';
+import { Comunicado } from '../comunicados/entities/comunicado.entity';
+import { FotografiaGaleria } from '../galeria/entities/fotografia-galeria.entity';
+import { PublicacionTransparencia } from '../transparencia/entities/publicacion-transparencia.entity';
 import { Usuario } from '../usuarios/entities/usuario.entity';
 
 // Driver ODBC con autenticación de Windows (LocalDB / Azure Data Studio).

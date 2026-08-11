@@ -7,12 +7,12 @@ import request from 'supertest';
 import { App } from 'supertest/types';
 import { AuthModule } from '../src/auth/auth.module';
 import { RolUsuario } from '../src/auth/enums/rol-usuario.enum';
-import { ComunicadosService } from '../src/LandingPage/comunicados/comunicados.service';
-import { AdminComunicadosController } from '../src/LandingPage/comunicados/controllers/admin-comunicados.controller';
-import { PublicComunicadosController } from '../src/LandingPage/comunicados/controllers/public-comunicados.controller';
-import { Comunicado } from '../src/LandingPage/comunicados/entities/comunicado.entity';
-import { EstadoComunicado } from '../src/LandingPage/comunicados/enums/estado-comunicado.enum';
-import { TipoComunicado } from '../src/LandingPage/comunicados/enums/tipo-comunicado.enum';
+import { ComunicadosService } from '../src/comunicados/services/comunicados.service';
+import { AdminComunicadosController } from '../src/comunicados/controllers/admin-comunicados.controller';
+import { PublicComunicadosController } from '../src/comunicados/controllers/public-comunicados.controller';
+import { Comunicado } from '../src/comunicados/entities/comunicado.entity';
+import { EstadoComunicado } from '../src/comunicados/enums/estado-comunicado.enum';
+import { TipoComunicado } from '../src/comunicados/enums/tipo-comunicado.enum';
 
 const JWT_SECRET = 'test-admin-comunicados-secret';
 
