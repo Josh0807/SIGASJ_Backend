@@ -48,6 +48,8 @@ async function bootstrap() {
     .addTag('Comunicados administrativos')
     .addTag('Galería pública')
     .addTag('Galería administrativa')
+    .addTag('Transparencia pública')
+    .addTag('Transparencia administrativa')
     .build();
 
   const document = SwaggerModule.createDocument(app, swaggerConfig);
