@@ -282,6 +282,33 @@ describe('TransparenciaService', () => {
     ).rejects.toBeInstanceOf(BadRequestException);
   });
 
+  it('rechaza reorganizar con publicaciones inexistentes', async () => {
+    const txRepository = {
+      findBy: jest.fn().mockResolvedValue([
+        {
+          idPublicacionTransparencia: 1,
+          ordenVisualizacion: 0,
+        } as PublicacionTransparencia,
+      ]),
+      save: jest.fn(),
+    };
+
+    repository.manager.transaction.mockImplementation(async (callback) =>
+      callback({
+        getRepository: () => txRepository,
+      } as never),
+    );
+
+    await expect(
+      service.reorderAdmin({
+        publicaciones: [
+          { idPublicacionTransparencia: 1, ordenVisualizacion: 0 },
+          { idPublicacionTransparencia: 99, ordenVisualizacion: 1 },
+        ],
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
   it('excluye publicaciones inactivas del listado público', async () => {
     repository.find.mockResolvedValue([
       {
