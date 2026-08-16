@@ -25,7 +25,7 @@ Swagger: http://localhost:3000/docs/
 
 ### Si sigue fallando
 - Instala la workload **Node.js development** en Visual Studio Installer.
-- Confirma Node: `C:\Program Files\nodejs\npm.cmd`
+- Confirma Node: `node -v` debe mostrar v22.x (usar nvm: `nvm use 22`)
 - Como alternativa segura, usa la terminal:
 
 ```powershell
@@ -33,9 +33,17 @@ cd sigasj_backend
 .\start-vs.cmd
 ```
 
+## Node.js
+
+Usar **Node 22 LTS** (misma versión que el equipo):
+
+```powershell
+nvm use 22
+node -v
+```
+
 ## Terminal
 ```powershell
-$env:Path = "C:\Program Files\nodejs;" + $env:Path
 cd sigasj_backend
 npm.cmd run start:dev
 ```

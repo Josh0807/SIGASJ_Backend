@@ -10,7 +10,7 @@
       "cwd": "${workspaceFolder}/sigasj_backend",
       "console": "integratedTerminal",
       "env": {
-        "PATH": "C:\\Program Files\\nodejs;${env:PATH}"
+        "PATH": "C:\\nvm4w\\nodejs;${env:PATH}"
       }
     }
   ]
