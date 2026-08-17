@@ -1,5 +1,17 @@
 # SIGASJ Backend
 
+API REST del portal SIGASJ. En la raíz hay un backend **Node.js + Express + SQLite** (rama `Wuipy`). El NestJS + SQL Server LocalDB sigue en `sigasj_backend/`.
+
+## Express (raíz del repo)
+
+```powershell
+cp .env.example .env
+npm.cmd install
+npm.cmd run dev
+```
+
+La API queda en `http://localhost:3000`. Credenciales: `admin` / `admin1234`.
+
 ## Base de datos (LocalDB)
 
 - Servidor: `(localdb)\MSSQLLocalDB`

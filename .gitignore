@@ -1,0 +1,24 @@
+# Node
+node_modules/
+npm-debug.log*
+.env
+
+# SQLite local
+*.db
+*.db-*
+sigasj.db
+
+# Uploads
+uploads/galeria/*
+uploads/transparencia/*
+!uploads/galeria/.gitkeep
+!uploads/transparencia/.gitkeep
+
+# OS / editor
+.DS_Store
+Thumbs.db
+*~
+*.log
+.vs/
+.vscode/*
+!.vscode/extensions.json
