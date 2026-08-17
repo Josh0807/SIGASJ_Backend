@@ -1,5 +1,3 @@
-import { formatearFecha } from '../../../shared/utils/helpers.js';
-
 export function toGaleriaResponse(foto) {
   return {
     id: foto.Id,

@@ -12,15 +12,3 @@ export function getPublicAnnouncements() {
       tipo: item.Estado,
     }));
 }
-
-export function listarComunicados() {
-  return db
-    .prepare('SELECT * FROM Comunicados ORDER BY Id DESC')
-    .all()
-    .map((item) => ({
-      fecha: item.Fecha,
-      titulo: item.Titulo,
-      descripcion: item.Descripcion,
-      estado: item.Estado,
-    }));
-}

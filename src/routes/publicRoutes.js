@@ -1,8 +1,5 @@
 import { Router } from 'express';
-import {
-  comunicadosRouter,
-  publicAnnouncementsRouter,
-} from '../features/announcements/public/routes.js';
+import publicAnnouncementsRouter from '../features/announcements/public/routes.js';
 import authRouter from '../features/auth/public/routes.js';
 import averiasRouter from '../features/averias/routes.js';
 import galleryPublicRouter from '../features/gallery/public/routes.js';
@@ -27,7 +24,6 @@ publicApiRouter.use('/auth', authRouter);
 publicApiRouter.use('/public/comunicados', publicAnnouncementsRouter);
 publicApiRouter.use('/public/galeria', galleryPublicRouter);
 publicApiRouter.use('/public/transparencia', transparenciaPublicRouter);
-publicApiRouter.use('/comunicados', comunicadosRouter);
 publicApiRouter.use('/proyectos', landingPublicRouter);
 publicApiRouter.use('/solicitudes', solicitudesPublicRouter);
 publicApiRouter.use('/seguimiento', seguimientoPublicRouter);
