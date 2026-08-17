@@ -1,8 +1,38 @@
-# SIGASJ Backend
+# SIGASJ API
 
-API REST del portal SIGASJ. En la raíz hay un backend **Node.js + Express + SQLite** (rama `Wuipy`). El NestJS + SQL Server LocalDB sigue en `sigasj_backend/`.
+API REST para el portal **SIGASJ** (Sistema de Gestión del Acueducto ASADA San Juan de Santa Cruz). Backend en **Node.js + Express**, conectado al frontend React/Vite.
 
-## Express (raíz del repo)
+## Tecnologías
+
+- **Node.js 18+** y **Express**
+- **SQLite** (`better-sqlite3`)
+- **JWT** para autenticación administrativa
+- **bcryptjs** para hash de contraseñas
+
+## Estructura
+
+```
+src/
+├── index.js                 # Arranque
+├── app.js                   # App Express
+├── routes/
+│   ├── publicRoutes.js
+│   └── privateRoutes.js
+├── features/
+│   ├── auth/
+│   ├── announcements/
+│   ├── gallery/
+│   ├── transparencia/
+│   ├── landing/
+│   ├── averias/
+│   ├── solicitudes/
+│   ├── lecturas/
+│   └── usuarios/
+└── shared/
+uploads/
+```
+
+## Instalación y ejecución
 
 ```powershell
 cp .env.example .env
@@ -10,55 +40,27 @@ npm.cmd install
 npm.cmd run dev
 ```
 
-La API queda en `http://localhost:3000`. Credenciales: `admin` / `admin1234`.
+La API queda en `http://localhost:3000`. El frontend Vite hace proxy de `/api` y `/uploads` a este puerto.
 
-## Base de datos (LocalDB)
+La base SQLite (`sigasj.db`) se crea al iniciar.
 
-- Servidor: `(localdb)\MSSQLLocalDB`
-- Base: **`SIGASJ`** (no usar `master`)
-- Auth: Windows
+### Credenciales por defecto
 
-En Azure Data Studio: conecta a ese servidor y selecciona la base **SIGASJ**.
+| Usuario     | Contraseña      | Rol        |
+|-------------|-----------------|------------|
+| `admin`     | `admin1234`     | admin      |
+| `fontanero` | `fontanero1234` | fontanero  |
 
-Migraciones:
-```powershell
-cd sigasj_backend
-npm.cmd run migration:run
-```
+## Endpoints principales
 
-## Visual Studio (botón verde)
-
-1. Abre **`SIGASJ_Backend.sln`**.
-2. Clic derecho en **sigasj_backend** → **Set as Startup Project**.
-3. En el desplegable del botón verde elige **`Swagger (Nest start:dev)`** (o `sigasj_backend`).
-4. Pulsa Start / F5.
-
-Swagger: http://localhost:3000/docs/
-
-### Si sigue fallando
-- Instala la workload **Node.js development** en Visual Studio Installer.
-- Confirma Node: `node -v` debe mostrar v22.x (usar nvm: `nvm use 22`)
-- Como alternativa segura, usa la terminal:
-
-```powershell
-cd sigasj_backend
-.\start-vs.cmd
-```
-
-## Node.js
-
-Usar **Node 22 LTS** (misma versión que el equipo):
-
-```powershell
-nvm use 22
-node -v
-```
-
-## Terminal
-```powershell
-cd sigasj_backend
-npm.cmd run start:dev
-```
-
-## Cursor / VS Code
-Run and Debug → **SIGASJ Backend (Swagger)**
+| Método | Ruta | Auth |
+|--------|------|------|
+| GET | `/api/health` | No |
+| POST | `/api/auth/login` | No |
+| GET | `/api/public/comunicados` | No |
+| GET | `/api/public/galeria` | No |
+| GET | `/api/public/transparencia` | No |
+| POST | `/api/averias` | No |
+| POST | `/api/solicitudes` | No |
+| GET | `/api/seguimiento/{numero}` | No |
+| GET/POST | `/api/admin/galeria` | JWT admin |

@@ -12,14 +12,11 @@
       {
         "type": "node",
         "request": "launch",
-        "name": "SIGASJ Backend (Swagger)",
+        "name": "SIGASJ Backend",
         "runtimeExecutable": "npm.cmd",
-        "runtimeArgs": ["run", "start:dev"],
-        "cwd": "${workspaceFolder}/sigasj_backend",
-        "console": "integratedTerminal",
-        "env": {
-          "PATH": "C:\\Program Files\\nodejs;${env:PATH}"
-        }
+        "runtimeArgs": ["run", "dev"],
+        "cwd": "${workspaceFolder}",
+        "console": "integratedTerminal"
       }
     ]
   }
